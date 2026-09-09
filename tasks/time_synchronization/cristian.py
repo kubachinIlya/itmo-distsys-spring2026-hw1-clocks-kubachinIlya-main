@@ -6,4 +6,7 @@ Use only public interface of the Clock class.
 """
 def cristian_time_synchronize(local_clock: Clock, remote_clock: Clock) -> None:
     # TODO: implement me (task 1.1)
+    # Core idea
+    # Get a remot_clock 
+    print(remote_clock.get_time())
     pass
