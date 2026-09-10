@@ -35,12 +35,48 @@ def run_single_point(
 	initial_skew_local_mcs: float,
 	# Parameter for initial remote clock skew in microseconds
 	initial_skew_remote_mcs: float,
-) -> ExperimentPoint:
+) -> ExperimentPoint: 
     # TODO: implement me (task 1.2)
+
+    # Формула для расчета relative_error: `|(local_time - remote_time) / remote_time|`
+    # Сброс тиков обязателен для обычного запуска
+	# run_experiment вызывает эту функцию в цикле,
+    # а без сброса глобальный счётчик тиков накапливается между точками
+    # Это приводит к ложному занижению relative_error (растёт знаменатель см. формула выше).
+    reset_ticks()
+
+	# Локальные часы, дрифт переданный используем
+    local_clock = LocalClock(initial_skew_mcs=initial_skew_local_mcs)
+
+    # Удалённые часы имитируют сервер времени за каналом связи 
+    # asymmetry_ratio задаёт перекос: request_delay = response_delay * ratio 
+    # get_time() у этого класса продвигает глобальные тики на
+    # (request_delay + response_delay) — это симуляция RTT 
+    remote_clock = ClockWithNetworkDelay(
+        network_delay_provider=NetworkStaticDelayProvider(
+            network_request_delay_ticks=network_response_delay_ticks * asymmetry_ratio,
+            network_response_delay_ticks=network_response_delay_ticks,
+        ),
+        initial_skew_mcs=initial_skew_remote_mcs,
+    )
+
+	# синхронизируем часы ранее разработанной функцией
+	# После вызова тики ровно = request + response  
+    cristian_time_synchronize(local_clock, remote_clock)
+
+	# снять локальное время ПОСЛЕ синхронизации
+    local_time = local_clock.get_time()
+	# используем _get_real_time сервера времени
+	# чтобы не было тика от get_time (получаем именно реальное время для расчета ошибки)
+    remote_time = remote_clock._get_real_time()
+
+ 	# Относительная ошибка по формуле
+    relative_error = abs((local_time - remote_time) / remote_time)
     return ExperimentPoint(
 		asymmetry_ratio=asymmetry_ratio,
-		relative_error=0.0,
+		relative_error=relative_error,
 	)
+
 
 
 def run_experiment(
