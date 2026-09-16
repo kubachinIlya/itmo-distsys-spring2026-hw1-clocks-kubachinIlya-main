@@ -11,6 +11,7 @@ def cristian_time_synchronize(local_clock: Clock, remote_clock: Clock) -> None:
     t_0 = local_clock.get_time()
     T = remote_clock.get_time()
     t_1 = local_clock.get_time()
-    # (T + (t_1 - t_0)/2) - время какое должно быть, но мы пользуемся offset сооответственно - текущее на процессе
+    # (T + (t_1 - t_0)/2) - время какое должно быть, но мы пользуемся методом offset сооответственно - текущее на процессе
     # RTT = t_1 - t_0 
+    # t_1 текущее время хоста отнимаем от времени, которое должно быть
     local_clock.add_offset((T + (t_1 - t_0)/2) - t_1) 

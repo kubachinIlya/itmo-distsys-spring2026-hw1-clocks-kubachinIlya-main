@@ -50,7 +50,7 @@ def run_single_point(
 
     # Удалённые часы имитируют сервер времени за каналом связи 
     # asymmetry_ratio задаёт перекос: request_delay = response_delay * ratio 
-    # get_time() у этого класса продвигает глобальные тики на
+    # get_time() у этого класса продвигает глобальные тики  
     # (request_delay + response_delay) — это симуляция RTT 
     remote_clock = ClockWithNetworkDelay(
         network_delay_provider=NetworkStaticDelayProvider(

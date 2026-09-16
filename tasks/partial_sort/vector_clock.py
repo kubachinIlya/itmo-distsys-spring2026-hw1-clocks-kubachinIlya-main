@@ -24,7 +24,7 @@ def partial_sort(timestamps: list[VectorClock]) -> list[VectorClock]:
         # le and lt
         # Зачем это нужно: если le = True, но lt = False, то это значит vc1 == vc2 покомпонентно
         # то есть нет отношения vc1 -> vc2
-        # le and lt are true - then there is a relation vc1 -> vc2
+        # le and lt are true - тогда там есть отношение vc1 -> vc2
         return le and lt
 
     # Элементы которые мы будем просматривать из начального списка
